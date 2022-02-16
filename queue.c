@@ -190,8 +190,14 @@ void q_release_element(element_t *e)
  */
 int q_size(struct list_head *head)
 {
-    // TODO
-    return -1;
+    if (head == NULL || list_empty(head))
+        return 0;
+
+    int count = 0;
+    for (struct list_head *ptr = head->next; ptr != head; ptr = ptr->next)
+        ++count;
+
+    return count;
 }
 
 /*
