@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -341,6 +342,48 @@ void q_reverse(struct list_head *head)
     } while (ptr != head);
 }
 
+struct list_head *mergesort(struct list_head *start, struct list_head *end)
+{
+    // if only one node, just return
+    if (start == end)
+        return start;
+
+    // if 2 or more nodes, split into 2 parts and do mergesort on both parts
+    struct list_head *mid = start, *flag = start;
+    for (; flag->next && flag->next->next; flag = flag->next->next)
+        mid = mid->next;
+
+    flag = mid->next;
+    mid->next = NULL;
+
+    struct list_head *left = mergesort(start, mid);
+    struct list_head *right = mergesort(flag, end);
+
+    // merge 2 sorted list
+    struct list_head tmp_head, *ptmp = &tmp_head;
+
+    for (element_t *l, *r; left && right; ptmp = ptmp->next) {
+        l = list_entry(left, element_t, list);
+        r = list_entry(right, element_t, list);
+
+        if (strcmp(l->value, r->value) < 0) {
+            ptmp->next = left;
+            left = left->next;
+        } else {
+            ptmp->next = right;
+            right = right->next;
+        }
+    }
+
+    ptmp->next = (struct list_head *) ((intptr_t) left | (intptr_t) right);
+
+    // repair prev links
+    for (ptmp = tmp_head.next; ptmp->next != NULL; ptmp = ptmp->next)
+        ptmp->next->prev = ptmp;
+
+    return tmp_head.next;
+}
+
 /*
  * Sort elements of queue in ascending order
  * No effect if q is NULL or empty. In addition, if q has only one
@@ -348,5 +391,20 @@ void q_reverse(struct list_head *head)
  */
 void q_sort(struct list_head *head)
 {
-    // TODO
+    if (head == NULL || head->prev == head->next)
+        return;
+
+    // do merge sort on list
+    struct list_head *start = head->next, *end = head->prev;
+    end->next = NULL;
+
+    // connect head and sorted list
+    head->next = mergesort(start, end);
+    head->next->prev = head;
+
+    // repair head.prev
+    for (; end->next != NULL; end = end->next)
+        ;
+    end->next = head;
+    head->prev = end;
 }
