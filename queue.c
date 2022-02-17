@@ -210,8 +210,28 @@ int q_size(struct list_head *head)
  */
 bool q_delete_mid(struct list_head *head)
 {
-    // TODO
     // https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list/
+
+    // get and check list size
+    size_t n = q_size(head);
+    if (n == 0)
+        return false;  // NULL or empty list
+
+
+    // move to target node
+    struct list_head *target = head->next;
+
+    for (int i = 0; i < n / 2; ++i)
+        target = target->next;
+
+    // remove this node
+    list_del(target);
+
+    // delete entry
+    element_t *entry = list_entry(target, element_t, list);
+    free(entry->value);
+    free(entry);
+
     return true;
 }
 
@@ -236,8 +256,27 @@ bool q_delete_dup(struct list_head *head)
  */
 void q_swap(struct list_head *head)
 {
-    // TODO
     // https://leetcode.com/problems/swap-nodes-in-pairs/
+
+    if (head == NULL || head->next == head->prev)
+        return;  // NULL, empty or single node no need to swap
+
+    struct list_head *left = head->next, *right = left->next;
+
+    do {
+        // swap
+        left->prev->next = right;
+        right->next->prev = left;
+        left->next = right->next;
+        right->prev = left->prev;
+        left->prev = right;
+        right->next = left;
+
+        // move to next
+        left = left->next;
+        right = left->next;
+
+    } while (left != head && right != head);
 }
 
 /*
@@ -249,7 +288,18 @@ void q_swap(struct list_head *head)
  */
 void q_reverse(struct list_head *head)
 {
-    // TODO
+    if (head == NULL || list_empty(head))
+        return;  // cannot return NULL or empty list
+
+
+    // traverse list and swap their next and prev
+    struct list_head *ptr = head, *tmp;
+    do {
+        tmp = ptr->next;
+        ptr->next = ptr->prev;
+        ptr->prev = tmp;
+        ptr = ptr->prev;
+    } while (ptr != head);
 }
 
 /*
