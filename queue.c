@@ -22,7 +22,7 @@ struct list_head *q_new()
     struct list_head *head = malloc(sizeof(struct list_head));
 
     // check malloc not return null (implies error or size is 0)
-    if (head != NULL)
+    if (head)
         INIT_LIST_HEAD(head);
 
     return head;
@@ -31,7 +31,7 @@ struct list_head *q_new()
 /* Free all storage used by queue */
 void q_free(struct list_head *l)
 {
-    if (l == NULL)
+    if (!l)
         return;  // should not free NULL list
 
 
@@ -55,17 +55,17 @@ void q_free(struct list_head *l)
  */
 bool q_insert_head(struct list_head *head, char *s)
 {
-    if (head == NULL)
+    if (!head)
         return false;  // head should not be null
 
 
     element_t *node = malloc(sizeof(element_t));
-    if (node == NULL)
+    if (!node)
         return false;  // malloc for new node failed
 
 
     node->value = malloc(strlen(s) + 1);
-    if (node->value == NULL) {
+    if (!node->value) {
         free(node);
         return false;  // malloc for string failed
     }
@@ -91,18 +91,18 @@ bool q_insert_head(struct list_head *head, char *s)
  */
 bool q_insert_tail(struct list_head *head, char *s)
 {
-    if (head == NULL)
+    if (!head)
         return false;  // cannot insert a node into NULL list
 
     // try to create new node
     element_t *node = malloc(sizeof(element_t));
-    if (node == NULL)
+    if (!node)
         return false;  // malloc for new node failed
 
 
     // try to allocate space for copying string
     node->value = malloc(strlen(s) + 1);
-    if (node->value == NULL) {
+    if (!node->value) {
         free(node);
         return false;  // malloc for string failed
     }
@@ -135,7 +135,7 @@ bool q_insert_tail(struct list_head *head, char *s)
  */
 element_t *q_remove_head(struct list_head *head, char *sp, size_t bufsize)
 {
-    if (head == NULL || list_empty(head))
+    if (!head || list_empty(head))
         return NULL;  // cannot remove a node from NULL or empty list
 
 
@@ -144,7 +144,7 @@ element_t *q_remove_head(struct list_head *head, char *sp, size_t bufsize)
     list_del(head->next);
 
     // copy target node's value if need
-    if (sp != NULL) {
+    if (sp) {
         strncpy(sp, first_entry->value, bufsize - 1);
         sp[bufsize - 1] = '\0';
     }
@@ -158,7 +158,7 @@ element_t *q_remove_head(struct list_head *head, char *sp, size_t bufsize)
  */
 element_t *q_remove_tail(struct list_head *head, char *sp, size_t bufsize)
 {
-    if (head == NULL || list_empty(head))
+    if (!head || list_empty(head))
         return NULL;  // cannot remove a node from NULL or empty list
 
 
@@ -167,7 +167,7 @@ element_t *q_remove_tail(struct list_head *head, char *sp, size_t bufsize)
     list_del(head->prev);
 
     // copy target node's value if need
-    if (sp != NULL) {
+    if (sp) {
         strncpy(sp, last_entry->value, bufsize - 1);
         sp[bufsize - 1] = '\0';
     }
@@ -191,12 +191,14 @@ void q_release_element(element_t *e)
  */
 int q_size(struct list_head *head)
 {
-    if (head == NULL || list_empty(head))
+    if (!head || list_empty(head))
         return 0;
 
     int count = 0;
     for (struct list_head *ptr = head->next; ptr != head; ptr = ptr->next)
         ++count;
+
+    // TODO : speed up this
 
     return count;
 }
@@ -248,7 +250,7 @@ bool q_delete_mid(struct list_head *head)
 bool q_delete_dup(struct list_head *head)
 {
     // https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii/
-    if (head == NULL)
+    if (!head)
         return false;
 
 
@@ -298,7 +300,7 @@ void q_swap(struct list_head *head)
 {
     // https://leetcode.com/problems/swap-nodes-in-pairs/
 
-    if (head == NULL || head->next == head->prev)
+    if (!head || head->next == head->prev)
         return;  // NULL, empty or single node no need to swap
 
     struct list_head *left = head->next, *right = left->next;
@@ -328,7 +330,7 @@ void q_swap(struct list_head *head)
  */
 void q_reverse(struct list_head *head)
 {
-    if (head == NULL || list_empty(head))
+    if (!head || list_empty(head))
         return;  // cannot return NULL or empty list
 
 
@@ -375,10 +377,10 @@ struct list_head *mergesort(struct list_head *start, struct list_head *end)
         }
     }
 
-    ptmp->next = (struct list_head *) ((intptr_t) left | (intptr_t) right);
+    ptmp->next = left ? left : right;
 
     // repair prev links
-    for (ptmp = tmp_head.next; ptmp->next != NULL; ptmp = ptmp->next)
+    for (ptmp = tmp_head.next; ptmp->next; ptmp = ptmp->next)
         ptmp->next->prev = ptmp;
 
     return tmp_head.next;
@@ -391,7 +393,7 @@ struct list_head *mergesort(struct list_head *start, struct list_head *end)
  */
 void q_sort(struct list_head *head)
 {
-    if (head == NULL || head->prev == head->next)
+    if (!head || head->prev == head->next)
         return;
 
     // do merge sort on list
@@ -403,7 +405,7 @@ void q_sort(struct list_head *head)
     head->next->prev = head;
 
     // repair head.prev
-    for (; end->next != NULL; end = end->next)
+    for (; end->next; end = end->next)
         ;
     end->next = head;
     head->prev = end;
