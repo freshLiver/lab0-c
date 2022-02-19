@@ -766,7 +766,7 @@ void q_shuffle(struct list_head *head)
 {
     // check queue length
     int len = q_size(head);
-    if (len < 1)
+    if (len <= 1)
         return;  // NULL, empty, only 1 node
 
 
