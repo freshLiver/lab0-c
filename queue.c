@@ -348,28 +348,20 @@ struct list_head *mergesort(struct list_head *start, struct list_head *end)
     struct list_head *right = mergesort(flag, end);
 
     // merge 2 sorted list
-    struct list_head tmp_head, *ptmp = &tmp_head;
+    struct list_head *new_head = start, **phead = &new_head;
 
-    for (element_t *l, *r; left && right; ptmp = ptmp->next) {
+    for (element_t *l, *r; left && right; phead = &(*phead)->next) {
         l = list_entry(left, element_t, list);
         r = list_entry(right, element_t, list);
 
-        if (strcmp(l->value, r->value) < 0) {
-            ptmp->next = left;
-            left = left->next;
-        } else {
-            ptmp->next = right;
-            right = right->next;
-        }
+        struct list_head **next;
+        next = strcmp(l->value, r->value) < 0 ? &left : &right;
+        *phead = *next;
+        *next = (*next)->next;
     }
+    *phead = left ? left : right;
 
-    ptmp->next = left ? left : right;
-
-    // repair prev links
-    for (ptmp = tmp_head.next; ptmp->next; ptmp = ptmp->next)
-        ptmp->next->prev = ptmp;
-
-    return tmp_head.next;
+    return new_head;
 }
 
 /*
@@ -390,9 +382,9 @@ void q_sort(struct list_head *head)
     head->next = mergesort(start, end);
     head->next->prev = head;
 
-    // repair head.prev
-    for (; end->next; end = end->next)
-        ;
+    // repair all prev links
+    for (end = head; end->next; end = end->next)
+        end->next->prev = end;
     end->next = head;
     head->prev = end;
 }
