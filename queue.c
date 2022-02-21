@@ -203,7 +203,7 @@ bool q_delete_mid(struct list_head *head)
 
     // get and check list size
     size_t n = q_size(head);
-    if (n == 0)
+    if (!n)
         return false;  // NULL or empty list
 
 
@@ -248,7 +248,7 @@ bool q_delete_dup(struct list_head *head)
 
     list_for_each_entry_safe (ptr, next, head, list) {
         // check entry value
-        if (strcmp(prev, ptr->value) == 0) {
+        if (!strcmp(prev, ptr->value)) {
             // set found
             found = true;
 
