@@ -64,17 +64,11 @@ bool q_insert_head(struct list_head *head, char *s)
         return false;  // malloc for new node failed
 
 
-    node->value = malloc(strlen(s) + 1);
+    node->value = strdup(s);
     if (!node->value) {
         free(node);
         return false;  // malloc for string failed
     }
-
-
-
-    // copy string content
-    memcpy(node->value, s, strlen(s));
-    node->value[strlen(s)] = '\0';
 
     // insert new node after head
     list_add(&node->list, head);
@@ -101,17 +95,11 @@ bool q_insert_tail(struct list_head *head, char *s)
 
 
     // try to allocate space for copying string
-    node->value = malloc(strlen(s) + 1);
+    node->value = strdup(s);
     if (!node->value) {
         free(node);
         return false;  // malloc for string failed
     }
-
-
-
-    // copy string content
-    memcpy(node->value, s, strlen(s));
-    node->value[strlen(s)] = '\0';
 
     // insert node after the last node in the list
     list_add_tail(&node->list, head);
@@ -197,8 +185,6 @@ int q_size(struct list_head *head)
     int count = 0;
     for (struct list_head *ptr = head->next; ptr != head; ptr = ptr->next)
         ++count;
-
-    // TODO : speed up this
 
     return count;
 }
