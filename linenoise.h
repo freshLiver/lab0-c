@@ -70,6 +70,7 @@ void linenoiseSetMultiLine(int ml);
 void linenoisePrintKeyCodes(void);
 void linenoiseMaskModeEnable(void);
 void linenoiseMaskModeDisable(void);
+void setAtExit(void);
 #ifdef __cplusplus
 }
 #endif

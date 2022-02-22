@@ -240,10 +240,7 @@ static int enableRawMode(int fd)
 
     if (!isatty(STDIN_FILENO))
         goto fatal;
-    if (!atexit_registered) {
-        atexit(linenoiseAtExit);
-        atexit_registered = 1;
-    }
+
     if (tcgetattr(fd, &orig_termios) == -1)
         goto fatal;
 
@@ -1326,4 +1323,13 @@ int linenoiseHistoryLoad(const char *filename)
     }
     fclose(fp);
     return 0;
+}
+
+
+void setAtExit(void)
+{
+    if (!atexit_registered) {
+        atexit(linenoiseAtExit);
+        atexit_registered = 1;
+    }
 }

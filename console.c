@@ -643,6 +643,8 @@ bool run_console(char *infile_name)
         return false;
     }
 
+    setAtExit();
+
     if (!has_infile) {
         char *cmdline;
         while ((cmdline = linenoise(prompt)) != NULL) {
