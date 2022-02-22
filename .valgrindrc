@@ -1,4 +1,7 @@
 --quiet
+--error-exitcode=1
 --memcheck:leak-check=full
 --memcheck:show-leak-kinds=all
---error-exitcode=1
+--massif:peak-inaccuracy=1
+--massif:massif-out-file=massif.log
+--massif:time-unit=B
