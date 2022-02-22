@@ -528,7 +528,7 @@ static bool do_dedup(int argc, char *argv[])
                         free(dup_value);
                         return false;
                     }
-                    element_t *cur, *safe;
+                    element_t *cur = NULL, *safe;
                     list_for_each_entry_safe (cur, safe, dup_value, list) {
                         free(cur->value);
                         free(cur);
@@ -575,7 +575,7 @@ static bool do_dedup(int argc, char *argv[])
             free(dup_value);
             return ok && !error_check();
         }
-        element_t *cur, *safe;
+        element_t *cur = NULL, *safe;
         list_for_each_entry_safe (cur, safe, dup_value, list) {
             free(cur->value);
             free(cur);
@@ -616,7 +616,7 @@ static bool do_dedup(int argc, char *argv[])
         free(dup_value);
         return ok && !error_check();
     }
-    element_t *cur, *safe;
+    element_t *cur = NULL, *safe;
     list_for_each_entry_safe (cur, safe, dup_value, list) {
         free(cur->value);
         free(cur);
