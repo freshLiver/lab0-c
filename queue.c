@@ -239,34 +239,20 @@ bool q_delete_dup(struct list_head *head)
 
 
     LIST_HEAD(duplist);
-    element_t *ptr = NULL, *next;
 
-    bool found = false;
-    char *prev = "";
+    bool prev = false;
+    element_t *ptr = list_entry(head->next, element_t, list), *next = ptr;
 
-    list_for_each_entry_safe (ptr, next, head, list) {
-        // check entry value
-        if (!strcmp(prev, ptr->value)) {
-            // set found
-            found = true;
-
-            // move to dup list
+    for (bool same; next->list.next != head; ptr = next) {
+        next = list_entry(ptr->list.next, element_t, list);
+        same = !strcmp(ptr->value, next->value);
+        if (same || prev)
             list_move(&ptr->list, &duplist);
-        }
-        // if diff value
-        else {
-            // if found is set, also move node prev to dup list
-            if (found)
-                list_move(ptr->list.prev, &duplist);
-
-            // set not found
-            found = false;
-
-            // update prev for next node to check if dup
-            prev = ptr->value;
-        }
+        prev = same;
     }
-
+    // don't forget last node
+    if (prev)
+        list_move(&ptr->list, &duplist);
 
     // delete each element in dup list
     list_for_each_entry_safe (ptr, next, &duplist, list) {
