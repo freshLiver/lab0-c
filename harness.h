@@ -20,7 +20,7 @@ char *test_strdup(const char *s);
 #ifdef INTERNAL
 
 /* Report number of allocated blocks */
-size_t allocation_check();
+size_t allocation_check(bool do_release);
 
 /* Probability of malloc failing, expressed as percent */
 extern int fail_probability;

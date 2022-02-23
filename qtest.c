@@ -100,7 +100,7 @@ static bool do_free(int argc, char *argv[])
     lcnt = 0;
     show_queue(3);
 
-    size_t bcnt = allocation_check();
+    size_t bcnt = allocation_check(true);
     if (bcnt > 0) {
         report(1, "ERROR: Freed queue, but %lu blocks are still allocated",
                bcnt);
@@ -990,7 +990,7 @@ static bool queue_quit(int argc, char *argv[])
     exception_cancel();
     set_cautious_mode(true);
 
-    size_t bcnt = allocation_check();
+    size_t bcnt = allocation_check(true);
     if (bcnt > 0) {
         report(1, "ERROR: Freed queue, but %lu blocks are still allocated",
                bcnt);

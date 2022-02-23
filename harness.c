@@ -221,9 +221,18 @@ char *test_strdup(const char *s)
     return (char *) memcpy(new, s, len);
 }
 
-size_t allocation_check()
+size_t allocation_check(bool do_release)
 {
-    return allocated_count;
+    size_t remain = allocated_count;
+
+    if (do_release) {
+        for (block_ele_t *ptr = allocated, *next; ptr; ptr = next) {
+            next = ptr->next;
+            free(ptr);
+        }
+        allocated_count = 0;
+    }
+    return remain;
 }
 
 /*
